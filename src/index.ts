@@ -19,7 +19,7 @@ export default {
 
 			// Increment the count
 			count++;
-			env.ROUTE_COUNTER.put(path, count.toString());
+			await env.ROUTE_COUNTER.put(path, count.toString());
 
 			// Return JSON response for API requests
 			return new Response(
