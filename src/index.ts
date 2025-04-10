@@ -15,6 +15,12 @@ export default {
 
 			// Get the current count from KV
 			let countKvValue = await env.ROUTE_COUNTER.get(path);
+			if (countKvValue === null) {
+				// If the key does not exist, initialize it to the base value from the query. If there's no query, default to 0.
+				const query = url.searchParams.get('start');
+				countKvValue = query ? query : '0';
+			}
+
 			let count = countKvValue ? parseInt(countKvValue) : 0;
 
 			// Increment the count
@@ -30,8 +36,9 @@ export default {
 				}),
 				{
 					headers: {
-						'Content-Type': 'application/json',
-						'Access-Control-Allow-Origin': '*'
+						'Access-Control-Allow-Origin': '*',
+						'Cache-Control': 'no-cache',
+						'Content-Type': 'application/json'
 					}
 				}
 			);
@@ -42,7 +49,10 @@ export default {
 					JSON.stringify({ error: error.message }),
 					{
 						status: 500,
-						headers: { 'Content-Type': 'application/json' }
+						headers: {
+							'Cache-Control': 'no-cache',
+							'Content-Type': 'application/json'
+						}
 					}
 				);
 			}
@@ -51,7 +61,10 @@ export default {
 				JSON.stringify({ error: 'Unknown error occurred' }),
 				{
 					status: 500,
-					headers: { 'Content-Type': 'application/json' }
+					headers: {
+						'Cache-Control': 'no-cache',
+						'Content-Type': 'application/json'
+					}
 				}
 			);
 		}
