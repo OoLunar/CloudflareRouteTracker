@@ -13,6 +13,11 @@ export default {
 			const url = new URL(request.url);
 			let path = url.pathname;
 
+			// Trim trailing slashes from the path
+			if (path.endsWith('/')) {
+				path = path.slice(0, -1);
+			}
+
 			// Get the current count from KV
 			let countKvValue = await env.ROUTE_COUNTER.get(path);
 			if (countKvValue === null) {
@@ -40,12 +45,6 @@ export default {
 
 			// Increment the count
 			count++;
-
-			// Trim trailing slashes from the path
-			if (path.endsWith('/')) {
-				path = path.slice(0, -1);
-			}
-
 			await env.ROUTE_COUNTER.put(path, count.toString());
 
 			// Return JSON response for API requests
