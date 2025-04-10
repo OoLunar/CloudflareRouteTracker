@@ -6,4 +6,4 @@ This repository is a CloudFlare worker that tracks how many times a route has be
 https://cloudflare-route-tracker.oolunar.workers.dev/<your-route-here>
 ```
 
-Do take care to check if that route hasn't already been taken as there are no checks in place to prevent duplicate routes.
+Do take care to check if that route hasn't already been taken as there are no checks in place to prevent duplicate routes. If you're importing your count from another service, you can use the `?start=<number>`. If you provide an invalid number, an error will be returned and the route will not be created. You may only import a count once, so be sure to set it to the correct number before using the route.

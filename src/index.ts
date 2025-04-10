@@ -18,10 +18,25 @@ export default {
 			if (countKvValue === null) {
 				// If the key does not exist, initialize it to the base value from the query. If there's no query, default to 0.
 				const query = url.searchParams.get('start');
+				try {
+					parseInt(query || '0');
+				} catch {
+					return new Response(
+						JSON.stringify({ error: 'Invalid start value' }),
+						{
+							status: 400,
+							headers: {
+								'Cache-Control': 'no-cache',
+								'Content-Type': 'application/json'
+							}
+						}
+					);
+				}
+
 				countKvValue = query ? query : '0';
 			}
 
-			let count = countKvValue ? parseInt(countKvValue) : 0;
+			let count = parseInt(countKvValue);
 
 			// Increment the count
 			count++;
