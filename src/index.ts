@@ -11,7 +11,7 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		try {
 			const url = new URL(request.url);
-			const path = url.pathname;
+			let path = url.pathname;
 
 			// Get the current count from KV
 			let countKvValue = await env.ROUTE_COUNTER.get(path);
@@ -40,6 +40,12 @@ export default {
 
 			// Increment the count
 			count++;
+
+			// Trim trailing slashes from the path
+			if (path.endsWith('/')) {
+				path = path.slice(0, -1);
+			}
+
 			await env.ROUTE_COUNTER.put(path, count.toString());
 
 			// Return JSON response for API requests
@@ -47,7 +53,7 @@ export default {
 				JSON.stringify({
 					schemaVersion: 1,
 					label: "Total Hits",
-					message: count.toString(),
+					message: count.toLocaleString(undefined),
 				}),
 				{
 					headers: {
