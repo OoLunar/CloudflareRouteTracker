@@ -12,7 +12,7 @@ export default {
 	async fetch(request: Request, env: Env, ctx: ExecutionContext): Promise<Response> {
 		try {
 			const url = new URL(request.url);
-			let path = url.pathname;
+			let path = url.pathname.toLowerCase();
 
 			// Trim trailing slashes from the path
 			if (path.endsWith('/')) {

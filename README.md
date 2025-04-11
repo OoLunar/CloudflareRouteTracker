@@ -1,6 +1,6 @@
 # Cloudflare Route Tracker
 
-This repository is a CloudFlare worker that tracks how many times a route has been accessed. It uses CloudFlare's Workers KV to store the data and returns the number of times a route has been accessed as a Shield.io badge. To use this worker, embed the below URL in your markdown or HTML as an image:
+This repository is a CloudFlare worker that tracks how many times a route has been accessed. It uses CloudFlare's Workers KV to store the data and returns the number of times a route has been accessed as a Shield.io badge. All routes are case-insensitive. To use this worker, embed the below URL in your markdown or HTML as an image:
 
 ```
 https://cloudflare-route-tracker.oolunar.workers.dev/<your-route-here>
