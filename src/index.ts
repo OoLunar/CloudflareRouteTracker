@@ -41,7 +41,7 @@ export default {
 			// Test if the logo is not base64
 			let logo = url.searchParams.get('logo');
 			if (logo && !logo.startsWith('data:image/')) {
-				logo = `https://cdn.simpleicons.org/${logo}/`;
+				logo = `https://cdn.simpleicons.org/${logo}`;
 
 				// Append the logo color if provided
 				let logoColor = url.searchParams.get('logoColor');
@@ -51,7 +51,7 @@ export default {
 						logoColor = logoColor.slice(1);
 					}
 
-					logo += logoColor;
+					logo += `/${logoColor}`;
 				}
 
 				// Scale
