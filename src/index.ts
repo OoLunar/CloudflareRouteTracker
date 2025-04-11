@@ -56,6 +56,17 @@ export default {
 
 				// Scale
 				logo += "?viewbox=auto"
+
+				// Embed the logo if needed
+				if (url.searchParams.has('logoEmbed')) {
+					const logoResponse = await fetch(logo);
+					if (logoResponse.ok) {
+						const logoBlob = await logoResponse.blob();
+						logo = `data:${logoBlob.type};base64,${await logoBlob.arrayBuffer().then((buffer) => Buffer.from(buffer).toString('base64'))}`;
+					} else {
+						logo = null;
+					}
+				}
 			}
 
 			let style: "flat" | "flat-square" | "for-the-badge" | "social" | "plastic" | undefined = undefined;
