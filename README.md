@@ -15,4 +15,5 @@ https://cloudflare-route-tracker.oolunar.workers.dev/<your-route-here>
 | `links`         | A Javascript array supporting up to two links. |
 | `logo`          | Can either be a base64 encoded image or a [simple-icons](https://simpleicons.org/) slug. |
 | `logoColor`     | The color of the logo. Either a hex color or a CSS color. |
+| `noIncrement`   | If set, the route will not be incremented. Good for testing. |
 | `style`         | The style of the shield. Can be either `flat`, `flat-square`, `for-the-badge`, `social`, or `plastic`. |

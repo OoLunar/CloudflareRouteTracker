@@ -23,9 +23,11 @@ export default {
 			let countKvValue = await env.ROUTE_COUNTER.get(path);
 			let count = countKvValue ? parseInt(countKvValue) : 0;
 
-			// Increment the count
-			count++;
-			await env.ROUTE_COUNTER.put(path, count.toString());
+			// Increment the count if needed
+			if (!url.searchParams.has('noIncrement')) {
+				count++;
+				await env.ROUTE_COUNTER.put(path, count.toString());
+			}
 
 			// Test if there's an "add" query parameter for those who are importing this from another worker
 			const add = url.searchParams.get('add');
