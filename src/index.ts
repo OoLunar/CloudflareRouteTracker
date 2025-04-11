@@ -1,8 +1,9 @@
+import { Format, makeBadge } from 'badge-maker';
+
 /**
  * Route Counter Worker
  * Tracks request counts for specific routes and returns shields.io compatible badges
  */
-
 export interface Env {
 	ROUTE_COUNTER: KVNamespace;
 }
@@ -20,48 +21,78 @@ export default {
 
 			// Get the current count from KV
 			let countKvValue = await env.ROUTE_COUNTER.get(path);
-			if (countKvValue === null) {
-				// If the key does not exist, initialize it to the base value from the query. If there's no query, default to 0.
-				const query = url.searchParams.get('start');
-				try {
-					parseInt(query || '0');
-				} catch {
-					return new Response(
-						JSON.stringify({ error: 'Invalid start value' }),
-						{
-							status: 400,
-							headers: {
-								'Cache-Control': 'no-cache',
-								'Content-Type': 'application/json'
-							}
-						}
-					);
-				}
-
-				countKvValue = query ? query : '0';
-			}
-
-			let count = parseInt(countKvValue);
+			let count = countKvValue ? parseInt(countKvValue) : 0;
 
 			// Increment the count
 			count++;
 			await env.ROUTE_COUNTER.put(path, count.toString());
 
-			// Return JSON response for API requests
-			return new Response(
-				JSON.stringify({
-					schemaVersion: 1,
-					label: "Total Hits",
-					message: count.toLocaleString(undefined),
-				}),
-				{
-					headers: {
-						'Access-Control-Allow-Origin': '*',
-						'Cache-Control': 'no-cache',
-						'Content-Type': 'application/json'
-					}
+			// Test if there's an "add" query parameter for those who are importing this from another worker
+			const add = url.searchParams.get('add');
+			if (add) {
+				const addCount = parseInt(add);
+				if (!isNaN(addCount)) {
+					count += addCount;
 				}
-			);
+			}
+
+			// Test if the logo is not base64
+			let logo = url.searchParams.get('logo');
+			if (logo && !logo.startsWith('data:image/')) {
+				logo = `https://cdn.simpleicons.org/${logo}/`;
+
+				// Append the logo color if provided
+				let logoColor = url.searchParams.get('logoColor');
+				if (logoColor) {
+					// Remove the # if it exists
+					if (logoColor.startsWith('#')) {
+						logoColor = logoColor.slice(1);
+					}
+
+					logo += logoColor;
+				}
+
+				// Scale
+				logo += "?viewbox=auto"
+			}
+
+			let style: "flat" | "flat-square" | "for-the-badge" | "social" | "plastic" | undefined = undefined;
+			switch (url.searchParams.get('style')) {
+				case 'flat':
+					style = 'flat';
+					break;
+				case 'flat-square':
+					style = 'flat-square';
+					break;
+				case 'for-the-badge':
+					style = 'for-the-badge';
+					break;
+				case 'social':
+					style = 'social';
+					break;
+				default:
+					style = 'plastic';
+			}
+
+			// Create the badge format
+			const format: Format = {
+				color: url.searchParams.get('color') || '#9f9f9f', // (Optional) Message color
+				label: url.searchParams.get('label') || 'Total Hits', // (Required) Label text
+				labelColor: url.searchParams.get('labelColor') || '#555', // (Optional) Label color
+				links: JSON.parse(url.searchParams.get('links') || '["https://github.com/OoLunar/CloudflareRouteTracker/"]'), // (Optional) Array of links
+				logoBase64: logo || '', // (Optional) Logo in base64 format
+				message: count.toLocaleString(undefined), // (Required) Message text
+				style: style
+			};
+
+			// Return JSON response for API requests
+			return new Response(makeBadge(format), {
+				headers: {
+					'Access-Control-Allow-Origin': '*',
+					'Cache-Control': 'no-cache',
+					'Content-Type': 'image/svg+xml'
+				}
+			});
 		} catch (error) {
 			// Type guard for Error
 			if (error instanceof Error) {
