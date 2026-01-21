@@ -10,12 +10,12 @@
 		"cf-typegen": "wrangler types"
 	},
 	"devDependencies": {
-		"@cloudflare/vitest-pool-workers": "^0.8.28",
+		"@cloudflare/vitest-pool-workers": "^0.12.5",
 		"@cloudflare/workers-types": "^4.20250401.0",
 		"@types/node": "^22.14.0",
 		"typescript": "^5.5.2",
 		"vitest": "~3.0.7",
-		"wrangler": "^4.15.0"
+		"wrangler": "^4.59.3"
 	},
 	"dependencies": {
 		"badge-maker": "^4.1.0"
